@@ -1,4 +1,5 @@
-# tasks
+# Tasks
+
 Easy to use, powerful Tasks and To-do app.
 
 Allows for multiple Task Lists, sharing Task Lists with others,
