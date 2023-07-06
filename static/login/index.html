@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Tasks</title>
+
+  <link rel="stylesheet" href="/bounce.css">
+
+  <link rel="icon" href="/favicon96.png" type="image/png">
+  <link rel="icon" href="/favicon96mask.jpg" type="image/jpeg">
+  <link rel="icon" href="/favicon512.png" type="image/png">
+  <link rel="icon" href="/favicon512mask.jpg" type="image/jpeg">
+
+  <style>
+    body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  </style>
+  
+  <script>
+    let wbd = null;
+    window.addEventListener('load', e => {
+      setTimeout(() => {
+        const btn = document.getElementById('login');
+        console.log('Window loaded, loading WebView Detector script');
+        const wbdScript = document.createElement('script');
+        wbdScript.onload = () => {
+          console.log('WebView Detector script loaded, loading Repl Auth script');
+          wbd = new WebViewDetector();
+          if (wbd.isWebView()) {
+            console.log('WebView detected');
+            btn.addEventListener('click', e => {
+              window.open('.', '_blank', '');
+            });
+            return;
+          } const replAuthScript = document.createElement('script');
+          replAuthScript.onload = () => {
+            console.log('Repl Auth script loaded');
+            btn.addEventListener('click', LoginWithReplit);
+          }; replAuthScript.src = 'https://replit.com/public/js/repl-auth-v2.js';
+          document.head.appendChild(replAuthScript);
+        }; wbdScript.src = 'https://webview-detector.luisafk.repl.co/webview-detector.js';
+        document.head.appendChild(wbdScript);
+      }, 100);
+    });
+  </script>
+</head>
+<body>
+  <h1>Login</h1>
+  <button id="login" class="cyan">Login with Replit</button>
+</body>
+</html>

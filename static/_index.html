@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+
+  <link rel="stylesheet" href="/bounce.css">
+  <link rel="stylesheet" href="/symbols.css">
+
+  <link rel="icon" href="/favicon96.png" type="image/png">
+  <link rel="icon" href="/favicon96mask.jpg" type="image/jpeg">
+  <link rel="icon" href="/favicon512.png" type="image/png">
+  <link rel="icon" href="/favicon512mask.jpg" type="image/jpeg">
+
+  <!-- app info -->
+  <meta name="author" content="LuisAFK">
+  <meta name="application-name" content="Tasks">
+  <meta name="msapplication-tooltip" content="Tasks - Easy to use, powerful Tasks and To-do app" />
+  <meta name="msapplication-starturl" content="https://perfectly-balanced.luisafk.repl.co" />
+  <meta name="msapplication-window" content="width=800;height=600" />
+  <meta name="msapplication-navbutton-color" content="orange" />
+  <meta name="description" content="Easy to use, powerful Tasks and To-do app">
+  <meta property="og:title" content="Tasks">
+  <meta property="og:description" content="Easy to use, powerful Tasks and To-do app">
+
+  <link rel="manifest" href="/manifest.json">
+
+  <style>
+    * {
+      font-display: fallback;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    button, [class*=symb], select {
+      user-select: none;
+    }
+
+    div#head {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    main div#tasklist-nav {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    main div#tasklist-nav > * {
+      z-index: 2;
+    }
+
+    main div#tasklist-nav div#tasklist-actions {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      padding: 0px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1;
+    }
+
+    main div#tasklist-nav div#tasklist-actions button {
+      margin: 0px 10px;
+    }
+
+    main div#tasklist-nav button#import-tasks {
+      margin-left: auto !important;
+    }
+
+    main div#tasks {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    main div#tasks card {
+      padding: 20px;
+      display: block;
+      position: relative;
+      grid-column-start: 1;
+      grid-column-end: 3;
+    }
+
+    main div#tasks card.odd {
+      grid-column-start: 3;
+      grid-column-end: 5;
+    }
+
+    main div#tasks card.completed {
+      outline-width: 1px;
+      outline-color: grey;
+      color: grey;
+    }
+
+    main div#tasks card.completed * {
+      outline-color: grey !important;
+      color: grey;
+    }
+
+    main div#tasks card.completed .empty {
+      color: lightgrey;
+    }
+
+    main div#tasks card .task-delete, main div#tasks card .task-complete {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 16px;
+    }
+
+    main div#tasks card .task-complete {
+      right: 40px;
+    }
+
+    main div#tasks card .empty {
+      color: #7a7a7a;
+    }
+
+    main div#tasks card [contenteditable=true] {
+      outline: none;
+    }
+
+    main div#tasks card [contenteditable=true]:focus {
+      outline: 2px solid black;
+      border-radius: 5px;
+    }
+
+    main div#tasks .task-grow {
+      grid-column-start: 2;
+      grid-column-end: 4;
+    }
+
+    hr {
+      width: 100%;
+    }
+
+    button * {
+      vertical-align: middle;
+    }
+
+    div#dialog {
+      position: fixed;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      background: rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    div#dialog.show {
+      display: flex;
+      z-index: 10;
+    }
+
+    div#dialog card {
+      padding: 20px;
+      max-width: 90vw;
+    }
+
+    div#dialog input#dialog-input {
+      display: none;
+      width: 100%;
+    }
+
+    div#dialog.input input#dialog-input {
+      display: block;
+    }
+
+    div#dialog select#dialog-select {
+      display: none;
+      width: 100%;
+    }
+
+    div#dialog.select select#dialog-select {
+      display: block;
+    }
+
+    div#dialog div#dialog-buttons {
+      margin-left: auto;
+      width: fit-content;
+    }
+
+    div#dialog button#dialog-cancel {
+      margin-right: 10px;
+    }
+
+    @media only screen and (max-width: 900px) {
+      main div#tasklist-nav div#tasklist-actions button {
+        padding: 8px;
+      }
+
+      main div#tasklist-nav div#tasklist-actions button span:last-child {
+        display: none;
+      }
+    }
+
+    @media only screen and (max-width: 400px) {
+      main div#tasklist-nav div#tasklist-actions {
+        padding: 0px;
+      }
+
+      h1 {
+        font-size: 48px;
+      }
+
+      h2 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="head">
+    <h1>Your Tasks</h1>
+
+    <h2>Task Lists</h2>
+
+    <p>
+      <label for="task-select">Choose a Task List:</label>
+      &nbsp;
+      <select id="task-select" class="cyan">
+        <optgroup label="Actions">
+          <option value="null" disabled selected>Select a Task List</option>
+          <option value="new">Create a new Task list</option>
+        </optgroup>
+        <optgroup label="Your Task Lists" id="task-select-tasks">
+          
+        </optgroup>
+        <optgroup label="Shared Task Lists" id="task-select-shared">
+          
+        </optgroup>
+      </select>
+    </p>
+  </div>
+
+  <hr class="cyan">
+
+  <main>
+    <div id="tasklist-nav">
+      <h2>Tasks</h2>
+
+      <div id="tasklist-actions">
+        <button id="delete-tasklist" class="pink" disabled>
+          <span class="material-symbols-outlined">Delete</span> <span>Task List</span>
+        </button>
+        <button id="share-tasklist" class="blue" disabled>
+          <span class="material-symbols-outlined">Person_Add</span> <span>Task List</span>
+        </button>
+        <button id="import-tasks" class="yellow" disabled>
+          <span class="material-symbols-outlined">Upload_File</span> <span>Tasks</span>
+        </button>
+        <button id="new-task" class="cyan" disabled>
+          <span class="material-symbols-outlined">Add</span> <span>Task</span>
+        </button>
+      </div>
+    </div>
+    <div id="tasks">
+      
+    </div>
+  </main>
+
+  <div id="dialog">
+    <card class="cyan">
+      <h3 id="dialog-title"></h3>
+      <p id="dialog-body"></p>
+      <input type="text" id="dialog-input" class="cyan">
+      <select id="dialog-select" class="cyan"></select>
+      <div id="dialog-buttons">
+        <button id="dialog-cancel">Cancel</button>
+        <button id="dialog-ok" class="cyan">Ok</button>
+      </div>
+    </card>
+  </div>
+</body>
+  <script>
+    window.addEventListener('load', e => {
+      setTimeout(() => {
+        console.log('Window loaded, loading Repl Auth script');
+        const replAuthScript = document.createElement('script');
+        replAuthScript.onload = () => {
+          console.log('Repl Auth script loaded, loading main script');
+          const mainScript = document.createElement('script');
+          mainScript.src = '/script.js';
+          document.head.appendChild(mainScript);
+        };
+        replAuthScript.src = 'https://replit.com/public/js/repl-auth-v2.js';
+        document.head.appendChild(replAuthScript);
+      }, 100);
+    });
+  </script>
+</html>
